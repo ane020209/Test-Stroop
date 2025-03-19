@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test de Stroop</title>
+    <style>
+        body { text-align: center; font-family: Arial, sans-serif; }
+        #word { font-size: 48px; font-weight: bold; margin-top: 50px; }
+        .btn { margin: 10px; padding: 10px 20px; font-size: 20px; cursor: pointer; }
+        #timer, #score { font-size: 20px; font-weight: bold; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+    <h1>Test de Stroop</h1>
+    <p>Choisissez la **couleur du mot**, pas ce qu'il dit !</p>
+    <div id="word">Rouge</div>
+    
+    <button class="btn" onclick="checkAnswer('red')">Rouge</button>
+    <button class="btn" onclick="checkAnswer('green')">Vert</button>
+    <button class="btn" onclick="checkAnswer('blue')">Bleu</button>
+    <button class="btn" onclick="checkAnswer('yellow')">Jaune</button>
+
+    <p id="result"></p>
+    <p id="score">Score : 0</p>
+    <p id="timer">Temps restant : 60s</p>
+
+    <script>
+        const words = ["Rouge", "Vert", "Bleu", "Jaune"];
+        const colors = ["red", "green", "blue", "yellow"];
+        let correctColor = "";
+        let score = 0;
+        let timeLeft = 60; // Temps limite en secondes
+        let gameActive = true;
+
+        function randomWord() {
+            if (!gameActive) return;
+
+            const wordText = words[Math.floor(Math.random() * words.length)];
+            correctColor = colors[Math.floor(Math.random() * colors.length)];
+
+            while (words[colors.indexOf(correctColor)] === wordText) {
+                correctColor = colors[Math.floor(Math.random() * colors.length)];
+            }
+
+            document.getElementById("word").innerText = wordText;
+            document.getElementById("word").style.color = correctColor;
+            document.getElementById("result").innerText = "";
+        }
+
+        function checkAnswer(choice) {
+            if (!gameActive) return;
+
+            if (choice === correctColor) {
+                score++;
+                document.getElementById("result").innerText = "✅ Correct !";
+            } else {
+                document.getElementById("result").innerText = "❌ Mauvais choix...";
+            }
+            document.getElementById("score").innerText = "Score : " + score;
+            setTimeout(randomWord, 500);
+        }
+
+        function startTimer() {
+            const timerInterval = setInterval(() => {
+                if (timeLeft > 0) {
+                    timeLeft--;
+                    document.getElementById("timer").innerText = "Temps restant : " + timeLeft + "s";
+                } else {
+                    clearInterval(timerInterval);
+                    gameActive = false;
+                    document.getElementById("word").innerText = "Temps écoulé !";
+                    document.getElementById("result").innerText = "Votre score final est de " + score + " points.";
+                }
+            }, 1000);
+        }
+
+        randomWord();
+        startTimer();
+    </script>
+
+</body>
+</html>
